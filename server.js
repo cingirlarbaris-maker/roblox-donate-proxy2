@@ -2,11 +2,10 @@ const express = require("express");
 const cors = require("cors");
 
 const app = express();
-
 app.use(cors());
 
 app.get("/", (req, res) => {
-    res.send("Proxy çalışıyor");
+    res.send("Donate proxy çalışıyor");
 });
 
 app.get("/passes/:userId", async (req, res) => {
@@ -25,13 +24,13 @@ app.get("/passes/:userId", async (req, res) => {
             const universeId = game.id;
 
             const passesResponse = await fetch(
-                `https://games.roblox.com/v1/games/${universeId}/game-passes?limit=100&sortOrder=Asc`
+                `https://develop.roblox.com/v1/universes/${universeId}/game-passes?limit=100&sortOrder=Asc`
             );
 
             const passesData = await passesResponse.json();
 
             for (const pass of passesData.data || []) {
-                if (pass.price && pass.id) {
+                if (pass.id && pass.price) {
                     allPasses.push({
                         id: pass.id,
                         name: pass.name,
@@ -45,6 +44,8 @@ app.get("/passes/:userId", async (req, res) => {
 
         res.json({
             success: true,
+            userId: userId,
+            count: allPasses.length,
             passes: allPasses
         });
 
@@ -59,5 +60,5 @@ app.get("/passes/:userId", async (req, res) => {
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-    console.log("Server çalışıyor");
+    console.log("Server çalışıyor. Port:", PORT);
 });
